@@ -1,0 +1,1 @@
+<div class='row justify-content-end'><div class='card message-card bg-lightblue m-1' data-toggle='tooltip' data-placement='left' title=''><div class='card-body p-2'><span class='mx-2' id='msj-content'></span><span class='float-right mx-1'><small><i class='fas fa-check fa-fw' style='color:green'></i></small></span></div></div></div>
