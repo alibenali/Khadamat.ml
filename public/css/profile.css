@@ -31,9 +31,6 @@ body{
     background: #fffffff0;
 }
 
-i:hover{
-    color:black !important;
-}
 
 .profile-img .file input {
     position: absolute;

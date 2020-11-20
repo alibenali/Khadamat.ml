@@ -12,9 +12,9 @@ class oneOfCurrencies implements Rule
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($p_method)
     {
-        //
+        $this->p_method = $p_method;
     }
 
     /**
@@ -26,7 +26,7 @@ class oneOfCurrencies implements Rule
      */
     public function passes($attribute, $value)
     {
-        $currencies = Currency::where('name', $value)->count();
+        $currencies = Currency::where('name', $value)->where('compatible_with','like', '%'.$this->p_method.'%')->count();
 
         return $currencies > 0;
     }

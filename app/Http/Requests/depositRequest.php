@@ -32,9 +32,10 @@ class depositRequest extends FormRequest
             ],
 
             'currency'   => [
-                'required', new oneOfCurrencies
+                'required', new oneOfCurrencies($this->request->get('p_method'))
             ],
 
+            'p_info'        => 'string|nullable',
             'amount'        => 'required|min:1|max:400000',
             'send_date'     => 'required|date|before:tomorrow',
             'img'           => 'image|mimes:jpeg,jpg,png|max:2048'

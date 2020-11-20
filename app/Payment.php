@@ -16,4 +16,14 @@ class Payment extends Model
     public function user(){
     	return $this->belongsTo('App\user');
     }
+
+
+    public function conversation(){
+    	return $this->hasMany('App\Conversation');
+    }
+
+
+    public function service(){
+    	return $this->belongsTo('App\Service');
+    }
 }

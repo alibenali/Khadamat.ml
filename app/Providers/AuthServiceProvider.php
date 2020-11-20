@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
+        'App\Balance' => 'App\Policies\BalancePolicy',
         'App\Deposit' => 'App\Policies\DepositPolicy',
         'App\Service' => 'App\Policies\ServicePolicy',
         'App\Conversation' => 'App\Policies\ConversationPolicy',
@@ -22,6 +23,8 @@ class AuthServiceProvider extends ServiceProvider
         'App\User' => 'App\Policies\ProfilePolicy',
         'App\Withdraw' => 'App\Policies\WithdrawPolicy',
         'App\Payments_offer' => 'App\Policies\OfferPolicy',
+        'App\Message' => 'App\Policies\messagePolicy',
+        'App\Rating' => 'App\Policies\RatingPolicy',
     ];
 
     /**

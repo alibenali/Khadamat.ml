@@ -10,26 +10,26 @@
 	@php ($badge_type = "success")
 @elseif($withdraw->the_status == "refused")
 	@php ($badge_type = "danger")
-@elseif($withdraw->the_status == "canceled")
+@elseif($withdraw->the_status == "cancelled")
+	@php ($badge_type = "warning")
+@elseif($withdraw->the_status == "pending")
 	@php ($badge_type = "warning")
 @endif
 
-<div class="container-fluid">
+<div class="container-fluid" {{ $rtl }}>
 	<div class="row">
 
 		<div class="col">
 			<div class="card text-center">
-				<h4 class="m-4 p-2">withdraw request <a class="font-weight-bold">({{ $withdraw->amount .' '. $withdraw->p_method }})</a></h4>
+				<h4 class="m-4 p-2"> {{ __('withdraw.withdrawRequest') }} <a class="font-weight-bold"> | {{ $withdraw->amount .' '.  $withdraw->p_method }} {{ $withdraw->currency }}</a></h4>
 
 
 				<div class="border border-left-0 border-right-0">
 					<small class="float-left p-0 m-2">{{ $withdraw->created_at }}</small>
 					<p class="p-5">
-						<big>Thanks for your withdraw. We're looking into your request (<a href="{{ url('withdraw/'.$withdraw->id.'') }}">#{{ $withdraw->id }}</a>)</big>
+						<big> {{ __('withdraw.thanksForwithdraw') }} </big>
 						<br>
-						Generally all withdraws are veryfied in the order they are created. Occasionally, due to some requests requiring more research than others and also due to excessive demand, a reply may take longer than one business day. Please accept our apologies in advance for any reply that exceeds this time frame, but be assured we are working hard to get back to you as quickly as possible to provide a considerate response.
-
-						Thanks for your patience
+						{{ __('withdraw.withdrawSteps') }}
 					</p>
 				</div>
 
@@ -38,17 +38,18 @@
 					<div class="border border-left-0 border-right-0">
 						<small class="float-left p-0 m-2">{{ $withdraw->updated_at }}</small>
 						<p class="p-5">
-							<big>Great! Your withdraw request has been accepted.</big><br>
-							Your profile {{ $withdraw->p_method }} balance has been updated, <a href="{{ url('home') }}">visit profile</a><br>
-							<a class="font-weight-bold">+ {{ $withdraw->amount }} {{ $withdraw->p_method }}</a>
+							<big>{{ __('withdraw.withdrawAccepted') }}</big><br>
+							Your profile {{  $withdraw->p_method }} {{ $withdraw->currency }} balance has been updated, <a href="{{ url('home') }}">visit profile</a><br>
+							<a class="font-weight-bold">+ {{ $withdraw->amount }} {{  $withdraw->p_method }} {{ $withdraw->currency }}</a>
 						</p>
 					</div>
 				@elseif($withdraw->the_status == "refused")
 					<div class="border border-left-0 border-right-0">
 						<small class="float-left p-0 m-2">{{ $withdraw->updated_at }}</small>
 						<p class="p-5">
-							<big>Your withdraw request has been refused.</big><br>
-							If you think this is a mistake, contact us as soon as possible.<br>
+							<big>{{ __('withdraw.withdrawRefused') }}</big><br>
+							{{ __('withdraw.refusedMistake') }}
+							<br>
 							<br>
 							<a class="btn-link" href="{{ url('https://m.me/machrou3.2019') }}">Facebook</a> | 
 							<a href = "mailto:support@machrou3.com?subject = withdraw request has been refused per mistake">
@@ -73,8 +74,8 @@
 						@include('layouts.modals.admin_withdraw_options')
 
 						@else
-						<button class="btn btn-link text-muted" onclick="confirm_click('Do you want really cancel the withdraw ?', '{{ action('WithdrawController@cancel', ['id' => $withdraw->id]) }}')">Cancel withdraw</button> |
-						<button class="btn btn-link text-muted">Urgent verification</button>
+						<button class="btn btn-link text-muted" onclick="confirm_click('Do you want really cancel the withdraw ?', '{{ action('WithdrawController@cancel', ['id' => $withdraw->id]) }}')">{{ __('withdraw.cancelWithdraw') }}</button> |
+						<button class="btn btn-link text-muted">{{ __('withdraw.urgentVerification') }}</button>
 						@endif
 
 					</div>
@@ -82,7 +83,8 @@
 					<div class="border border-left-0 border-right-0">
 						<small class="float-left p-0 m-2">{{ $withdraw->updated_at }}</small>
 						<p class="p-5">
-							<big>You canceled the withdraw</big>
+							<big>{{ __('withdraw.youCancelledWithdraw') }}
+							</big>
 						</p>
 					</div>
 				@endif
@@ -90,30 +92,30 @@
 		</div>
 
 
-		<div class="col-xl-3 col-lg-4">
+		<div class="col-xl-4 col-lg-4">
 			<div class="card">
 				<div class="card-body">
-					<h3 class="pb-5"><span class="float-right badge badge-{{ $badge_type }}">{{ $withdraw->the_status }}</span></h3>
+					<h3 class="pb-5"><span class="float-right badge badge-{{ $badge_type }}">{{ __('withdraw.'.$withdraw->the_status) }}</span></h3>
 					
-					<table>
+					<table class="w-100">
 					<tr>
-						<td><a class="font-weight-bold">P.method</a></td>
-						<td>: {{ $withdraw->p_method }}</td>
+						<td><a class="font-weight-bold">{{ __('withdraw.paymentMethod') }}</a> : </td>
+						<td> {{ $withdraw->p_method }}</td>
 					</tr>
 
 					<tr>
-						<td><a class="font-weight-bold">Amount</a></td>
-						<td>: {{ $withdraw->amount }}</td>
+						<td><a class="font-weight-bold">{{ __('withdraw.amount') }}</a> : </td>
+						<td> {{ $withdraw->amount }}</td>
 					</tr>
 
 					<tr>
-						<td><a class="font-weight-bold">Created at</a></td>
-						<td>: {{ $withdraw->created_at }}</td>
+						<td><a class="font-weight-bold">{{ __('withdraw.createdAt') }}</a> : </td>
+						<td> {{ $withdraw->created_at }}</td>
 					</tr>
 
 					<tr>
-						<td><a class="font-weight-bold">Last activity</a></td>
-						<td>: {{ $withdraw->updated_at }}</td>
+						<td><a class="font-weight-bold">{{ __('withdraw.lastActivity') }}</a> : </td>
+						<td> {{ $withdraw->updated_at }}</td>
 					</tr>
 
 					</table>

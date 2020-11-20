@@ -17,11 +17,15 @@
 
         @if($conversation->the_status == "open")
             @php ($badge_type = "primary")
+        @elseif($conversation->the_status == "pending")
+            @php ($badge_type = "primary")
         @elseif($conversation->the_status == "accepted")
             @php ($badge_type = "success")
         @elseif($conversation->the_status == "refused")
             @php ($badge_type = "danger")
-        @elseif($conversation->the_status == "canceled")
+        @elseif($conversation->the_status == "cancelled")
+            @php ($badge_type = "warning")
+        @else
             @php ($badge_type = "warning")
         @endif
 
@@ -43,18 +47,18 @@
 	});
 </script>
 
-<div class="container-fluid chat-container">
+<div class="container chat-container">
     <div class="row h-100">
-        <div class="col d-flex p-0 mh-100">
+        <div class="col d-flex p-0 mh-100 mr-lg-5">
             <div class="card" style="min-width: 100%">
-                <div class="card-header bg-darkblue text-white py-1 px-2" style="flex: 1 1">
+                <div class="card-header bg-lightblue text-white py-1 px-2 pt-3" style="flex: 1 1">
                     <div class="d-flex flex-row justify-content-start">
                         <div class="col">
                             <div class="my-0">
-                                <b>{{ $service->title }}</b>
-                            </div>
-                            <div class="my-0">
-                                <small>{{ $service->price }} {{ $service->currency }} {{ $service->p_method }}</small>
+                                <a href="{{ url('service/'.$service->id) }}">
+                                    <img class="img-fluid border d-inline" src="{{ asset('storage/'.$service->img_path.'') }}" style="width: 55px;height: 55px;border-radius: 50%;">
+                                </a>
+                                <h6 class="d-none d-md-inline ml-3"><b><a href="{{ url('service/'.$service->id) }}" class="color-darkblue">{{ substr($service->title, 0,60) }}..</a></b></h6>
                             </div>
                         </div>
                         @can('create_offer', $payment)
@@ -105,6 +109,8 @@
                                 </div>
                             </div>
                                 
+                            @elseif($message->user_id == 0)
+                                <div class="alert alert-primary m-5">{{$message->created_at->format('Y-m-d, H:i')}} {{$message->content}}</div>
                             @else
                             <div class="row">
                                 <div class="card message-card m-1 red-tooltip" data-toggle="tooltip" data-placement="left" title="{{$message->created_at->format('Y-m-d, H:i')}}">
@@ -122,6 +128,7 @@
 
                         @endforeach    
                     </div>
+                    <a class="text-muted text-right p-3 d-none" id="sendingseen"></a>
                     <form method="POST" action="{{ action('MessageController@store') }}" id="my_form">
                         @csrf
                     <input type="hidden" name="conversation_id" value="{{ $conversation->id }}">
@@ -139,7 +146,7 @@
         </div>
 
 
-        <div class="col-xs-12 col-md-4 col-lg-3 p-0">
+        <div class="col-xs-12 col-lg-4 p-0">
             <div class="card">
                 <div class="card-body">
                     <h3 class="pb-5"><span class="float-right badge badge-{{ $badge_type }}">{{ $conversation->the_status }}</span></h3>
@@ -148,12 +155,12 @@
                     
                     <tr>
                         <td><a class="font-weight-bold">Service Price</a></td>
-                        <td>: {{ $payment->price }} {{ $service->currency }} {{ $payment->payment_method }}</td>
+                        <td>: {{ $payment->price }} {{ $payment->currency }} {{ $payment->payment_method }}</td>
                     </tr>
 
                     <tr>
                         <td><a class="font-weight-bold">Service Fees</a></td>
-                        <td>: {{ $payment->fees }} {{ $service->currency }} {{ $payment->payment_method }}</td>
+                        <td>: {{ $payment->fees }} {{ $payment->currency }} {{ $payment->payment_method }}</td>
                     </tr>
 
                     <tr>
@@ -176,31 +183,49 @@
                     </table>
 					<br><br>
 
-						<a class="font-weight-bold text-primary">Total: <a class="text-dark">{{ $payment->fees + ($payment->price * $payment->quantity) }} {{ $service->currency }} {{ $payment->payment_method }}</a></a>
+						<a class="font-weight-bold text-primary">Total: <a class="text-dark">{{ $payment->fees + $offers_price + ($payment->price * $payment->quantity) }} {{ $payment->currency }} {{ $payment->payment_method }}</a></a>
 
-                    <br><br>
-                    <img class="img-fluid border" src="{{ asset('storage/'.$service->img_path.'') }}">
-
-                    <br><br>
-
-					<!-- Button trigger modal -->
-					@can('accept', $payment)
-					@if($payment->the_status == "open")
-					<button type="button" class="btn btn-success" data-toggle="modal" data-target="#accept_modal">
-					  Accept
-					</button>
-					@endif
-					@endcan
-					@can('refuse', $payment)
-					@if($payment->the_status == "open")
-					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#refuse_modal">
-					  Refuse
-					</button>
-					@endif
-					@endcan
-					@include('layouts.modals.admin_payment_options')
                 </div>
             </div>
+
+                <div class="m-5">
+                <!-- Button trigger modal -->
+                    @can('pending', $payment)
+                    <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#pending_modal">
+                      Mark as pending
+                    </button>
+                    @endcan
+
+                    @can('accept', $payment)
+                    <button type="button" class="btn btn-success mt-3" data-toggle="modal" data-target="#accept_modal">
+                     Mark as completed
+                    </button>
+                    @endcan
+
+                    @can('pay', $payment)
+                    <form method="POST" action="{{ action('Voyager\PaymentController@pay') }}">
+                        @csrf
+                        <input type="hidden" name="payment_id" value="{{ $payment->id }}">
+                        <button type="submit" class="btn btn-primary mt-3">
+                          Pay server
+                        </button>
+                    </form>
+                    @endcan
+
+                    @can('refuse', $payment)
+                    <button type="button" class="btn btn-danger mt-3" data-toggle="modal" data-target="#refuse_modal">
+                      Refuse
+                    </button>
+                    @endcan
+
+                    @include('layouts.modals.admin_payment_options')
+                </div>
+                
+                    @can('refund', $payment)
+                    <button type="button" class="btn mt-3" data-toggle="modal" data-target="#refund_modal">
+                     Refund
+                    </button>
+                    @endcan
         </div>
 
     </div>
@@ -213,9 +238,10 @@
 
 
 <script>
-    
+
 $(document).ready(function(){
-    
+
+
     var _token = $('input[name="_token"]').val();
     var conversation_id = {{ $conversation->id }};
     var last_msj_id = {{ $last_msj }};
@@ -233,7 +259,7 @@ intialize();
 
  function get_data(){
    $.ajax({
-    url:"{{ route('conversation.fetch') }}",
+    url:"{{ route('manage.conversation.fetch') }}",
     method:"POST",
     data:{_token:_token, conversation_id:conversation_id, last_msj_id:last_msj_id},
     success:function(result)
@@ -248,21 +274,21 @@ intialize();
         var result = result;
         append_message(result);
         intialize();
-        setTimeout(get_data, 3000);
+        setTimeout(get_data, 5000);
      }
-
     }
-
    })
-
  }
 
  $('#textarea').keydown(function() {
+
 var message = $("#textarea").val();
 if (event.keyCode == 13) {
 if (message == "") {
 alert("Enter Some in input field, ok !!");
 } else {
+     $("#sendingseen").text("sending message...");
+     $("#sendingseen").addClass("d-inline");
 
     var _token = $('input[name="_token"]').val();
     var conversation_id = {{ $conversation->id }};
@@ -274,7 +300,10 @@ $.ajax({
     data:{_token:_token, conversation_id:conversation_id, message:message},
     success:function(result)
     {
-        get_data();
+        append_my_message(message);
+        $("#sendingseen").text("");
+        $("#sendingseen").addClass("d-none");
+        intialize();
     }
 
    })
@@ -289,13 +318,19 @@ get_data();
 });
 
 
+    function append_my_message(message){
+        var d = new Date();
+        var time = d.getHours() + ":" + d.getMinutes();
+
+        var $sorting_message = "<div class='row justify-content-end' ><div class='card message-card bg-lightblue m-1' data-toggle='tooltip' data-placement='left' title='" + time + "'><div class='card-body p-2'><span class='mx-2'>" + message + "</span><span class='float-right mx-1'><small><i class='fas fa-check fa-fw' style='color:green'></i></small></span></div></div></div>";
+
+            $("#mydiv").append($sorting_message);
+    }
 
     function append_message(result){
 
-        var $sorting_message = "<div class='row justify-content-end' ><div class='card message-card bg-lightblue m-1' data-toggle='tooltip' data-placement='left' title=''><div class='card-body p-2'><span class='mx-2'>" + result.content + "</span><span class='float-right mx-1'><small><i class='fas fa-check fa-fw' style='color:green'></i></small></span></div></div></div>";
 
         var $coming_message = "<div class='row'><div class='card message-card m-1 red-tooltip' data-toggle='tooltip' data-placement='left' title='" + result.created_at + "'><div class='card-body p-2'><span class='mx-2'>" + result.content + "</span></div></div></div>";
-
 
 
         if(result.type == "offer"){
@@ -304,11 +339,8 @@ get_data();
 
             $("#mydiv").append($offer);
         }else{
-            if(result.user_id == {{ $user_id }}){
-             $("#mydiv").append($sorting_message);
-            }else{
-             $("#mydiv").append($coming_message);
-            }
+          $("#mydiv").append($coming_message);
+
         }
         
 

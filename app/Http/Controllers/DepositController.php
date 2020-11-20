@@ -10,17 +10,12 @@ use Auth;
 use App\PaymentMethod;
 use App\Currency;
 use App\Traits\order_queue;
+use App\Traits\createNotification;
 
 class DepositController extends Controller
 {
 
-    // Logined if not go login 
-    public function __construct(){
-        $this->middleware('auth');
-    }
-
-
-
+    use createNotification;
     use order_queue;
 
 
@@ -99,6 +94,7 @@ class DepositController extends Controller
         $deposit = new Deposit;
         $deposit->user_id       = Auth::user()->id;
         $deposit->p_method   = $Request->input('p_method');
+        $deposit->p_info   = $Request->input('p_info');
         $deposit->currency   = $Request->input('currency');
         $deposit->amount        = $Request->input('amount');
         $deposit->send_date     = $Request->input('send_date');
@@ -113,6 +109,8 @@ class DepositController extends Controller
         $this->order();
 
         session()->flash('success', 'The deposit has been created.');
+        
+        $this->createNotification(Auth::id(),'depositCreated','',url('deposit/'.$deposit->id));
 
         return redirect('deposit/'.$deposit->id);
     }
@@ -150,6 +148,8 @@ class DepositController extends Controller
         $this->order();
 
         session()->flash('success', 'The deposit has been cancelled.');
+        
+        $this->createNotification(Auth::id(),'youCancelledDeposit','',url('deposit/'.$deposit->id));
 
         return redirect('deposit/'.$id.'');
     }
@@ -171,47 +171,5 @@ class DepositController extends Controller
         return redirect('deposit/'.$id.'');
     }
 
-    // Accept deposit
-    public function accept(Request $request){
-    	$id = $request->input('id');
-        $deposit = Deposit::find($id);
-        $balance = Balance::where('user_id', $deposit->user_id)->first();
-
-        $this->Authorize('accept', $deposit);
-
-		$payment_method = strtolower($deposit->sold_method);
-
-		$balance->$payment_method = $balance->$payment_method + $request->input('amount');
-		$balance->save();
-
-        $deposit->the_status = "Accepted";
-        $deposit->amount = $request->input('amount');
-        $deposit->save();
-
-        $this->order();
-
-        session()->flash('success', 'The deposit has been accepted.');
-
-        return redirect('deposit/'.$id.'');
-    }
-
-
-    // Refuse deposit
-    public function refuse(Request $request){
-    	$id = $request->input('id');
-        $deposit = Deposit::find($id);
-
-        $deposit->the_status = "Refused";
-        $deposit->save();
-
-        $this->order();
-        
-        session()->flash('success', 'The deposit has been refused.');
-    }
-
-    // Delete Deposit
-    public function destroy(){
-
-    }
 
 }

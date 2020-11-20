@@ -8,35 +8,33 @@ use App\Balance;
 use App\Payment;
 use App\Conversation;
 use App\Message;
+use App\Payments_offer;
+use App\Cart;
+use App\BalanceHistory;
 use Auth;
 use App\user;
 use App\Http\Requests\paymentRequest;
 use App\Http\Requests\acceptPaymentRequest;
-use App\Traits\balance_to_hold;
 use App\Traits\trait_conversation;
+use App\Traits\createNotification;
+use App\Traits\balanceTrait;
 
 class PaymentController extends Controller
 {
 
 
-    // Logined if not go login 
-    public function __construct(){
-        $this->middleware('auth');
-    }
 
-    // use the trait tp convert balance to hold
-	use balance_to_hold;
+	use balanceTrait;
     // use the trait to create conversation
 	use trait_conversation;
+	// use the trait to create notification
+	use createNotification;
 
 
     public function index(){
 
-        if( Auth::user()->is_admin){
-        $payments = Payment::where('the_status', 'Open')->orderBy('id', 'desc')->get();
-        }else{
         $payments = Payment::where('user_id', Auth::id())->get();
-        }
+        
 
         return view('payments.index', ['payments' => $payments]);
     }
@@ -44,7 +42,6 @@ class PaymentController extends Controller
     public function show($id){
         $payment = Payment::find($id);
         $conversation = Conversation::where('payment_id', $payment->id)->first();
-
         return redirect('conversation/'.$conversation->id.'');
     }
 
@@ -56,7 +53,7 @@ class PaymentController extends Controller
 		if($balance == NULL){
 
 			session(['URL' => url()->current()]);
-			session()->flash('danger', 'You didn\'t create the currencyes yet, Please create the currencyes.');
+			session()->flash('danger', __('profile.noBalance'));
 			return redirect('home');
 		}
 
@@ -64,17 +61,25 @@ class PaymentController extends Controller
 		$balance = $balance->$p_method;
 
 
-		$new_bal = $balance - $service->price;
+		$total = $service->price + $service->fees;
 
 		if($balance >= $service->price){
 			$msj = "";
 			$status = "";
 		}else{
-			$msj = "Sorry, you don't have enough balance";
+			$msj = "enoughBalance";
 			$status = "disabled";
 		}
 
-		return view('payments.confirm', ['service' => $service, 'balance' => $balance, 'new_bal' => $new_bal, 'status' => $status, 'msj' => $msj]);
+		$count_cart = Cart::where('service_id', $service->id)->where('the_status', '!=', 'deleted')->count();
+		if($count_cart == 0){
+			$cart = new Cart;
+			$cart->user_id = Auth::id();
+			$cart->service_id = $service->id;
+			$cart->save();
+		}
+
+		return view('payments.confirm', ['service' => $service, 'balance' => $balance, 'total' => $total, 'status' => $status, 'msj' => $msj]);
 	}
 
 
@@ -88,6 +93,8 @@ class PaymentController extends Controller
 		$service_id = $request->input('service_id');
 		$service = Service::find($service_id);
 
+		$payment->creator_id = $service->creator_id;
+
 		$balance = Auth::user()->balances->first();
 
 
@@ -95,6 +102,7 @@ class PaymentController extends Controller
 
 
 		$payment_method = strtolower($service->p_method.'_'.$service->currency);
+		$hold_p_method = strtolower('hold_'.$service->p_method.'_'.$service->currency);
 
 		$payment->payment_method = $service->p_method;
 		$payment->currency = $service->currency;
@@ -108,96 +116,73 @@ class PaymentController extends Controller
 		$payment->total = $total;
 
 		// Checking if you have enough balance
-		if($balance->$payment_method >= $total){
-			$new_balance = $balance->$payment_method - $total;
+		if($this->enough(Auth::id(), $payment_method, $total)){
+
+		$payment->new_balance = $balance->$payment_method - $total;
+		$payment->save();
+		$payment_id = $payment->id;
+		$balance_amount = ($service->fees + ($service->price * $payment->quantity));
+        $this->balanceDown(Auth::id(), $payment_method, $balance_amount, "Payment created", "conversation/".$payment_id);
+        $this->balanceUp(Auth::id(), $hold_p_method, $balance_amount, "Payment created", "conversation/".$payment_id);
+		// Calling to the method to create conversation
+		$this->store_conversation(Auth::user()->id, $service_id, $payment_id);
+
 		}else{
 			$index = url('home');
 			header('location: '.$index.'');
 			exit();
 		}
-		$payment->new_balance = $new_balance;
 
-		// Calling to the method to convert  balance to hold
-		$this->balance_to_hold(Auth::user()->id, $payment_method, $new_balance);
-
-		$payment->save();
-
-		$payment_id = $payment->id;
-
-		// Calling to the method to create conversation
-		$this->store_conversation(Auth::user()->id, $service_id, $payment_id);
 
 	}
 
 
 
-	public function accept(acceptPaymentRequest $request){
 
+
+
+	public function cancel(acceptPaymentRequest $request){
 
 		$payment_id = $request->input('payment_id');
 		$payment = Payment::find($payment_id);
-		$this->authorize('accept', $payment);
+
+		$this->authorize('cancel', $payment);
+
+
+		$payments_offer = Payments_offer::where('payment_id',$payment_id)->where('the_status', 'paid')->get();
+
+		foreach($payments_offer as $offer){
+			
+		$this->balanceUp($offer->user_id, $offer->pm_slug, $offer->price, "Offer refunded", "coversation/".$payment->id);
+		$this->balanceDown($offer->user_id, 'hold_'.$offer->pm_slug, $offer->price, "Offer refunded", "coversation/".$payment->id);
+
+		}
 
         $conversation = Conversation::where('payment_id', $payment->id)->first();
 
         $balance = Balance::where('user_id', $payment->user_id)->first();
 
 		$payment_method = strtolower($payment->payment_method.'_'.$payment->currency);
-
-		
         $hold_p_method = strtolower('hold_'.$payment_method);
 
-        $balance->$hold_p_method = $balance->$hold_p_method - $payment->total;
-		$payment->the_status = "accepted";
-		$conversation->the_status = "accepted";
+		$payment->the_status = "cancelled";
+		$conversation->the_status = "cancelled";
 		$conversation->save();
 		$payment->save();
-		$balance->save();
+
 		// Create new mesasge
 		$message = new Message;
 		$message->user_id = 0;
 		$message->conversation_id = $conversation->id;
-		$message->content = "The payment has been accepted";
+		$message->content = "The payment has been cancelled.";
 		$message->save();
 
-		return redirect('admin/conversation/'.$conversation->id.'');
-	}
+        $this->createNotification(Auth::id(),'youCancelledPayment','','conversation/'.$conversation->id);
 
+		$this->balanceDown($payment->user_id, $hold_p_method, $payment->total, "Payment canceled", "coversation/".$payment->id);
+		$this->balanceUp($payment->user_id, $payment_method, $payment->total, "Payment canceled", "coversation/".$payment->id);
 
-	public function refuse(acceptPaymentRequest $request){
-
-
-		$payment_id = $request->input('payment_id');
-		$raison = $request->input('raison');
-		$payment = Payment::find($payment_id);
-		$this->authorize('refuse', $payment);
-
-        $conversation = Conversation::where('payment_id', $payment->id)->first();
-
-        $balance = Balance::where('user_id', $payment->user_id)->first();
-
-
-		$payment_method = strtolower($payment->payment_method.'_'.$payment->currency);
-
-		
-        $hold_p_method = strtolower('hold_'.$payment_method);
-
-        $balance->$hold_p_method = $balance->$hold_p_method - $payment->total;
-        $balance->$payment_method = $balance->$payment_method + $payment->total;
-
-		$payment->the_status = "refused";
-		$conversation->the_status = "refused";
-		$conversation->save();
-		$payment->save();
-		$balance->save();
-		// Create new mesasge
-		$message = new Message;
-		$message->user_id = 0;
-		$message->conversation_id = $conversation->id;
-		$message->content = "The payment has been refused. Reason:  ".$raison;
-		$message->save();
-
-		return redirect('admin/conversation/'.$conversation->id.'');
+		return redirect('conversation/'.$conversation->id.'');
 	}
 
 }

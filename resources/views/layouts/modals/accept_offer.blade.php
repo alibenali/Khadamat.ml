@@ -5,7 +5,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="{{ $offer[($message->content - 1)]->id }}_label">Accept Modal</h5>
+        <h5 class="modal-title" id="{{ $offer[($message->content - 1)]->id }}_label">{{ __('conversation.acceptModel') }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -14,7 +14,8 @@
         @PHP ($p_method = $offer[($message->content - 1)]->pm_slug)
         @if($balance->$p_method >= $offer[($message->content - 1)]->price)
           @PHP ($button = "enabled")
-          You confirm that {{$offer[($message->content - 1)]->price}} {{$offer[($message->content - 1)]->currency}} {{$offer[($message->content - 1)]->p_method}} will be cutted off from your balance
+          {{$offer[($message->content - 1)]->price}} {{$offer[($message->content - 1)]->currency}} {{$offer[($message->content - 1)]->p_method}} 
+          {{ __('conversation.cuttedBalance') }}
         @else
           @PHP ($button = "disabled")
           Sorry You don't have this amount. <br>
@@ -23,8 +24,8 @@
       </div>
       <div class="modal-footer">
         <input type="hidden" name="offer_id" value="{{ $offer[($message->content - 1)]->id }}">
-        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" {{$button}}>Confirm</button>
+        <button type="submit" class="btn btn-secondary" data-dismiss="modal">{{ __('conversation.close') }}</button>
+        <button type="submit" class="btn btn-primary" {{$button}}>{{ __('conversation.confirm') }}</button>
       </div>
     </div>
   </div>

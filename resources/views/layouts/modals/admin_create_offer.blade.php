@@ -72,18 +72,20 @@ $(document).ready(function(){
 
    })
 
-
-
+   var pic = pic;
+   
+  if (typeof(pic) != 'undefined' && pic != null){
    if(value == 'ccp'){
-    document.getElementById('pic').style.visibility='initial';
-    document.getElementById('pic').style.height='60px';
-    document.getElementById('pic').style.opacity='3';
+    pic.style.visibility='initial';
+    pic.style.height='60px';
+    pic.style.opacity='3';
   }else{
-    document.getElementById('pic').style.opacity='0';
-    document.getElementById('pic').style.height='0px';
-    document.getElementById('pic').style.visibility='hidden';
+    pic.style.opacity='0';
+    pic.style.height='0px';
+    pic.style.visibility='hidden';
 
   }
+}
 
 
   }

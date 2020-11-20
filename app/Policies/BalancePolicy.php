@@ -14,7 +14,6 @@ class BalancePolicy
     public function create(){
 
     	$balance = Balance::where('user_id', Auth::id())->get()->count();
-
     	return $balance == 0;
     }
 }

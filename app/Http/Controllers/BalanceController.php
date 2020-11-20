@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Balance;
 use Auth;
 use App\Policies\BalancePolicy;
+use App\Traits\createNotification;
+
 class BalanceController extends Controller
 {
+    use createNotification;
+
 	public function index(){
 
 	}
@@ -27,6 +31,8 @@ class BalanceController extends Controller
     	$balance->save();
 
         session()->flash('success', 'Your currencyes has been created.');
+
+        $this->createNotification(Auth::id(),'currenciesCreated','','');
 
         if(session()->has('URL')){
             return redirect(session()->get('URL'));

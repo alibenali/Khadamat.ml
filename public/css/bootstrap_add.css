@@ -18,7 +18,72 @@
  }
 
 
+/* Right And Left */
+.r-0{
+	right: 0rem;
+}
+.r-1{
+	right: 0.5rem;
+}
+.r-2{
+	right: 2rem;
+}
+.r-3{
+	right: 3rem;
+}
+.r-4{
+	right: 4rem;
+}
+.r-5{
+	right: 5rem;
+}
 
+.l-0{
+	left: 0rem;
+}
+.l-1{
+	left: 0.5rem;
+}
+.l-2{
+	left: 2rem;
+}
+.l-3{
+	left: 3rem;
+}
+.l-4{
+	left: 4rem;
+}
+.l-5{
+	left: 5rem;
+}
+
+
+/* Remove underline of text */
+.no-under-line:hover, .no-under-line:visited, .no-under-line:link, .no-under-line:active
+{
+    text-decoration: none;
+}
+
+
+/* Remove underline of text */
+.hover-red:hover{
+	color: red !important;
+}
+.hover-black:hover{
+	color: black !important;
+}
+.hover-gray:hover{
+	color: gray !important;
+}
+.hover-orange:hover{
+	color: orange !important;
+}
+.hover-blue:hover{
+	color: #1f1fcdd1 !important;
+}
+.hover-white:hover{
+	color: white !important;
+}
 
 .tooltip-inner {
   font-size: 12px;

@@ -371,7 +371,8 @@ class ServiceController extends VoyagerBaseController
 
         $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
         $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
-        $data->creator_id = Auth::id();        
+        $data->creator_id = Auth::id();
+        $data->fees = 50;
         $data->save();
         
         event(new BreadDataAdded($dataType, $data));

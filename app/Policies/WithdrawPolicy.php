@@ -11,9 +11,7 @@ class WithdrawPolicy extends \TCG\Voyager\Policies\BasePolicy
     use HandlesAuthorization;
 
     public function before($user, $ability){
-        if($user->is_admin){
-            return true;
-        }
+
     }
 
     /**
@@ -55,12 +53,18 @@ class WithdrawPolicy extends \TCG\Voyager\Policies\BasePolicy
 
     public function accept(User $user, Withdraw $withdraw)
     {
-        return false;
+        return $withdraw->the_status == "pending";
     }
+
+    public function pending(User $user, Withdraw $withdraw)
+    {
+        return $withdraw->the_status == "open";
+    }
+
 
     public function refuse(User $user, Withdraw $withdraw)
     {
-        return false;
+        return $withdraw->the_status == "pending";
     }
 
     /**

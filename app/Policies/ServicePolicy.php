@@ -25,12 +25,7 @@ class ServicePolicy extends \TCG\Voyager\Policies\BasePolicy
     	}
     }
 
-    public function view(User $user, Service $service)
-    {
-        return true;
-    }
-
-
+ 
 	public function read(User $user, Service $service)
     {
         return $service->creator_id == Auth::id();

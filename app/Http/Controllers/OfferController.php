@@ -5,17 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Conversation;
 use App\Message;
+use App\Payment;
 use App\Payments_offer;
 use App\Balance;
+use App\BalanceHistory;
 use Auth;
+use App\Traits\createNotification;
+use App\Traits\balanceTrait;
 
 class OfferController extends Controller
 {
+
+    use createNotification;
+    use balanceTrait;
 
 
 	public function accept(Request $request){
         $offer_id = $request->input('offer_id');
         $offer   = Payments_offer::where('id', $offer_id)->firstOrFail();
+
 
         $this->authorize('accept', $offer);
 
@@ -23,13 +31,15 @@ class OfferController extends Controller
         $hold_p_method = 'hold_'.$p_method;
 
         $balance = Balance::where('user_id', Auth::id())->firstOrFail();
-        $balance->$p_method = $balance->$p_method - $offer->price;
-        $balance->$hold_p_method = $balance->$hold_p_method + $offer->price;
-        $balance->save();
 
-
+        $balance_amount = $offer->price;
         $offer->the_status = 'paid';
         $offer->save();
+
+        $this->balanceDown(Auth::id(), $p_method, $balance_amount, "Offer accepted", "conversation/".$offer->payment_id);
+        $this->balanceUp(Auth::id(), $hold_p_method, $balance_amount, "Offer accepted", "conversation/".$offer->payment_id);
+
+        return redirect(url()->previous());
 
     }
 
@@ -41,7 +51,8 @@ class OfferController extends Controller
 
     	$offer = new Payments_offer;
 
-        $this->authorize('create', $offer);
+        $payment = Payment::where('conversation_id', $conversation->id)->first();
+        $this->authorize('create_offer', $payment);
 
     	$offer->user_id =  $conversation->user_id;
     	$offer->conversation_id = $conversation->id;
@@ -66,6 +77,9 @@ class OfferController extends Controller
     	$message->content = $number_offers;
 
     	$message->save();
+
+        $this->createNotification($conversation->user_id,'youReceivedAnOffer','',url('conversation/'.$conversation->id));
+
 
     	return redirect(url()->previous());
     }

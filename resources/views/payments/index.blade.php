@@ -7,23 +7,23 @@
 
 
 
-<div class="container">
+<div class="container" {{ $rtl }}>
 	<div class="row">
 
 		<div class="col">
 
-			<table class="table table-striped table-hover" id="payments">
-			  <thead class="thead-dark">
+			<table class="table mt-4 table-striped table-hover table-responsive w-100 d-block d-md-table" id="payments">
+			  <thead>
 			    <tr>
-				  <th scope="col">ID</th>
-				  <th scope="col">User</th>
-			      <th scope="col">Service</th>
-			      <th scope="col">Quantity</th>
-			      <th scope="col">Payment method</th>
-				  <th scope="col">Price</th>
-				  <th scope="col">Fees</th>
-				  <th scope="col">Total</th>
-			      <th scope="col">Status</th>
+			      <th scope="col">{{ __('payment.id') }}</th>
+				  <th scope="col">{{ __('payment.service') }}</th>
+			      <th scope="col">{{ __('payment.quantity') }}</th>
+			      <th scope="col">{{ __('payment.paymentMethod') }}</th>
+			      <th scope="col">{{ __('payment.currency') }}</th>
+				  <th scope="col">{{ __('payment.price') }}</th>
+				  <th scope="col">{{ __('payment.fees') }}</th>
+				  <th scope="col">{{ __('payment.total') }}</th>
+			      <th scope="col">{{ __('payment.status') }}</th>
 			    </tr>
 			  </thead>
 
@@ -41,19 +41,21 @@
 
 					@elseif($payment->the_status == "canceled")
 						@php ($badge_type = "warning")
+					@else
+						@php ($badge_type = "warning")
 					@endif
 				 
 				 
-				    <tr onclick="window.location.assign('{{ url('payment/'.$payment->id.'') }}')">
-				      <th scope="row"><a href="{{ url('payment/'.$payment->id.'') }}">{{ $payment->id }}</a></th>
-				      <td>{{ $payment->user->name }}</td>
-				      <td>{{ $payment->service_id }}</td>
+				    <tr onclick="window.location.assign('{{ url('payment/'.$payment->id.'') }}')"  style="cursor: pointer;">
+				      <td>{{ $payment->id }}</td>
+				      <td><a href="{{ url('service/'.$payment->service->id) }}"><img src="{{ asset('storage/'.$payment->service->img_path.'') }}" style="width: 30px;height: 30px;border-radius: 50%;"></a></td>
 				      <td>{{ $payment->quantity }}</td>
 					  <td>{{ $payment->payment_method }}</td>
+					  <td>{{ $payment->currency }}</td>
 				      <td>{{ $payment->price }}</td>
 				      <td>{{ $payment->fees }}</td>
-				      <td>{{ $payment->price + $payment->fees }}</td>
-				      <td><h5><span class="badge badge-{{$badge_type}}">{{ $payment->the_status }}</span></h5></td>
+				      <td>{{ $payment->total }}</td>
+				      <td><span class="badge badge-{{$badge_type}}">{{ __('payment.'.$payment->the_status) }}</span></td>
 				    </tr>	
 				
 
@@ -68,7 +70,9 @@
 <script type="text/javascript">
 	$(document).ready( function () {
     $('#payments').DataTable({
-    	"order": [[ 5, "desc" ]]
+    	"order": [[ 0, "desc" ]],
+    	"searching": false,
+    	"bLengthChange": false,
     });
 } );
 </script>

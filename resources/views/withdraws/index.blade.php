@@ -7,21 +7,21 @@
 
 
 
-<div class="container">
+<div class="container" {{ $rtl }}>
 	<div class="row">
 
 		<div class="col">
-			<button class="btn btn-link float-right mb-2" onclick="window.location.assign('{{ url('withdraw/create') }}')">New withdraw</button>
-			<table class="table table-striped table-hover" id="withdraws">
-			  <thead class="thead-dark">
+			<button class="btn btn-light border mb-2 mt-5 pt-0 pb-0 float-right"onclick="window.location.assign('{{ url('withdraw/create') }}')">{{ __('withdraw.newWithdraw') }}</button>
+			<table class="table table-striped table-hover table-responsive w-100 d-block d-md-table" id="withdraws">
+			  <thead class="">
 			    <tr>
-				  <th scope="col">ID</th>
-			      <th scope="col">P.method</th>
-			      <th scope="col">Amount</th>
-				  <th scope="col">Created at</th>
-				  <th scope="col">Last activity</th>
-				  <th scope="col">Queue</th>
-			      <th scope="col">Status</th>
+				  <th scope="col">{{ __('withdraw.id') }}</th>
+			      <th scope="col">{{ __('withdraw.paymentMethod') }}</th>
+			      <th scope="col">{{ __('withdraw.amount') }}</th>
+				  <th scope="col">{{ __('withdraw.createdAt') }}</th>
+				  <th scope="col">{{ __('withdraw.lastActivity') }}</th>
+				  <th scope="col">{{ __('withdraw.qeue') }}</th>
+			      <th scope="col">{{ __('withdraw.status') }}</th>
 			    </tr>
 			  </thead>
 
@@ -37,7 +37,9 @@
 					@elseif($withdraw->the_status == "refused")
 						@php ($badge_type = "danger")
 
-					@elseif($withdraw->the_status == "canceled")
+					@elseif($withdraw->the_status == "cancelled")
+						@php ($badge_type = "warning")
+					@elseif($withdraw->the_status == "pending")
 						@php ($badge_type = "warning")
 					@endif
 				 
@@ -53,7 +55,7 @@
 				      @else
 				      <td>{{ $withdraw->the_queue }}</td>
 				      @endif
-				      <td><h5><span class="badge badge-{{$badge_type}}">{{ $withdraw->the_status }}</span></h5></td>
+				      <td><h5><span class="badge badge-{{$badge_type}}">{{ __('withdraw.'.$withdraw->the_status) }}</span></h5></td>
 				    </tr>	
 				
 
@@ -68,7 +70,9 @@
 <script type="text/javascript">
 	$(document).ready( function () {
     $('#withdraws').DataTable({
-    	"order": [[ 0, "desc" ]]
+    	"order": [[ 0, "desc" ]],
+    	"searching": false,
+    	"bLengthChange": false,
     });
 } );
 </script>

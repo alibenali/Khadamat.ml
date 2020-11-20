@@ -15,18 +15,22 @@ trait trait_conversation {
     	$conversation->service_id = $service_id;
     	$conversation->payment_id = $payment_id;
 		$conversation->the_status = "open";
+        $conversation->server_id = '0';
 
     	$conversation->save();
 
         $payment = Payment::where('id', $conversation->payment_id)->first();
         $payment->conversation_id = $conversation->id;
+        $conversation->server_id = $payment->creator_id;
+
+        $conversation->save();
         $payment->save();
 
         // Create new mesasge
         $message = new Message;
         $message->user_id = 0;
         $message->conversation_id = $conversation->id;
-        $message->content = "Payment has been created, we will respond to your payment in the coming 24 hours";
+        $message->content = "paymentCreated";
         $message->save();
 
     	return header("Location: conversation/".$conversation->id."");

@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use App\Service;
 use App\Http\Requests\serviceRequest;
 use Auth;
+use App\PaymentMethod;
+use App\Currency;
+use App\service_category;
+use App\service_sub_category;
 
 class ServicesController extends Controller
 {
 
 
 
-    // Logined if not go login 
-    public function __construct(){
-        $this->middleware('auth');
-    }
+
 
 
 
@@ -23,14 +24,17 @@ class ServicesController extends Controller
     function index($cat = 'all', $subcat = 'all'){
 
     	if($cat == 'all'){
-    		$list_services = Service::all();
+    		$list_services = Service::where('the_status', 'open')->paginate(15);
     	}else{
 
-    		$list_services = Service::where('category', $cat)->get();
+    		$list_services = Service::where('category', $cat);
 
     		if($subcat != 'all'){
-    			$list_services = Service::where('category', $cat)->where('sub_category', $subcat)->get();
+    			$list_services = Service::where('category', $cat)->where('sub_category', $subcat);
     		}
+
+			$list_services = $list_services->where('the_status', 'open')->paginate(15);
+
     	}
 
 
@@ -39,42 +43,47 @@ class ServicesController extends Controller
 
 
 	// Enter to the Service details (clicked in)
-	function show($service){
-    	$service = Service::find($service);
+	public function show($service){
+
+    	$service = Service::where('id', $service)->where('the_status', 'open')->first();
 
     	return view('services/service_details', ['service' => $service]);
     }
 
 
 
-    // Form create service
-    function create(){
-
-        $this->authorize('create', Service::class);
-
-        return view('services/create');
-    }
-
     
 
-    // Create service
-    function store(serviceRequest $Request){
+    function fetch(Request $request)
+    {
+     $select = $request->get('select');
+     $value = $request->get('value');
+     $dependent = $request->get('dependent');
 
-        $service = new Service;
-        $service->title = $Request->input('title');
-        $service->description = $Request->input('desc');
-        $service->price = $Request->input('price');
-        $service->p_method = $Request->input('p_method');
-        $service->currency = $Request->input('currency');
-        $service->duration = $Request->input('duration');
-        $service->remaining = $Request->input('remaining');
-        $service->img_path = str_replace("public", "", $Request->file('image')->store('public/img/services/'.date('Y').'/'.date('M').''));
+     $data = service_sub_category::where('cat_slug', '=', $value)->get();
 
-        $service->save();
+     if($data->count() > 1){
+        $output = '<option value="">Select sub category</option>';
+     }else{
+        $output = '';
+     }
 
-        session()->flash('success', 'The service has been created.');
-
-        return view('services/create');
+     foreach($data as $row)
+     {
+      $output .= '<option value="'.$row->slug_name.'">'.$row->name.'</option>';
+     }
+     echo $output;
     }
+
+
+    // Echo the list of the services
+    public function search($search = ''){
+
+
+    $list_services = Service::where('the_status', 'open')->where('title', 'like', '%' . $search . '%')->paginate(15);
+
+        return view('services/services', ['services' => $list_services]);
+    }
+
 
 }

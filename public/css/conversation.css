@@ -4,11 +4,6 @@
     min-height: 20rem;
 }
 
-* {
-    border-radius: 0px!important;
-    border-collapse: collapse;
-    box-shadow:none!important;
-}
 
 .message-card {
     max-width: 60%;
@@ -17,10 +12,13 @@
     background-color:#7CC0FF;
 }
 .bg-darkblue{
-    background-color:#0E5EA9;
+    background-color:#1b4b72;
 }
 .bg-lightgrey {
     background-color:#f1f1f1;
+}
+.color-darkblue{
+    color:#1b4b72;
 }
 .search-input-h {
     height: 10%!important;
@@ -60,20 +58,4 @@
 }
 #list-group {
     flex: 1 1;
-}
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  background-color: #F5F5F5;
-}
-
-::-webkit-scrollbar {
-  width: 12px;
-  background-color: #F5F5F5; 
-}
-
-::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#30cfd0), to(#330867));
-  background-image: -webkit-linear-gradient(bottom, #30cfd0 0%, #330867 100%);
-  background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%); 
 }

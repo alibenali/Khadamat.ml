@@ -1,267 +1,249 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
+    <meta charset="utf-8">
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{ __('welcome.'.setting('site.title')) }}</title>
+    <link rel="stylesheet" href="{{ asset('public/welcome/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic">
+    <link rel="stylesheet" href="{{ asset('public/welcome/fonts/fontawesome-all.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('public/welcome/fonts/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Aclonica">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.css">
+    <link rel="icon" href="{{ url('storage/'.setting('site.logo')) }}">
+    <meta name="description" content="Safa9at is the world's largest freelance services marketplace for businesses to focus on growth & create a successful business, Safa9at Algeria">
+    <meta name="og:title" property="og:title" content="Safa9at Algeria do it from your home">
 
-  <title>{{setting('site.title')}}</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145443509-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
 
-  <!-- Font Awesome Icons -->
-  <link href="{{ asset('welcome/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+	  gtag('config', 'UA-145443509-1');
+	</script>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
-  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-
-  <!-- Plugin CSS -->
-  <link href="{{ asset('welcome/vendor/magnific-popup/magnific-popup.css')}}" rel="stylesheet">
-
-  <!-- Theme CSS - Includes Bootstrap -->
-  <link href="{{ asset('welcome/css/creative.min.css')}}" rel="stylesheet">
 
 </head>
 
-<body id="page-top">
+<body style="overflow-x: hidden;" {{ $rtl }}>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">{{setting('site.title')}}</a>
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto my-2 my-lg-0">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#about">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#services">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger " href="{{ url('login') }}" style="color: #f24516;">Sign in</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{{ url('register') }}" style="color: #f24516;">Register</a>
-          </li>
-        </ul>
-      </div>
+
+    <div class="text-right" style="background-color: #abbfda;">
+        <div class="text-left position-absolute" style="max-width: 30px;left: 10px;top: 9px;">
+            @if(app()->getLocale() == "en")
+             @PHP($golang = "ar")
+            @else
+             @PHP($golang = "en")
+            @endif
+            <img onclick="window.location.assign('{{ url('lang/'.$golang ) }}')" src="{{ asset('img/countries/'.app()->getLocale().'.png') }}" style="max-width: 30px;cursor: pointer;"  class="rounded">
+        </div>
+    	<button onclick="window.location.assign('{{ url('login') }}')" class="btn btn-primary text-right btn-light" type="button" style="margin: 7px;">{{ __('welcome.signIn') }}</button>
+        <button onclick="window.location.assign('{{ url('register') }}')" class="btn btn-primary text-right btn-light" type="button" style="margin: 7px;">{{ __('welcome.register') }}</button>
     </div>
-  </nav>
-
-  <!-- Masthead -->
-  <header class="masthead">
-    <div class="container h-100">
-      <div class="row h-100 align-items-center justify-content-center text-center">
-        <div class="col-lg-10 align-self-end">
-          <h1 class="text-uppercase text-white font-weight-bold">We are at your service</h1>
-          <hr class="divider my-4">
-        </div>
-        <div class="col-lg-8 align-self-baseline">
-          <p class="text-white-75 font-weight-light mb-5">Find The Perfect Services For Your Business</p>
-          <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- About Section -->
-  <section class="page-section bg-primary" id="about">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <h2 class="text-white mt-0">We've got what you need!</h2>
-          <hr class="divider light my-4">
-          <p class="text-white-50 mb-4">Start Bootstrap has everything you need to get your new website up and running in no time! Choose one of our open source, free to download, and easy to use themes! No strings attached!</p>
-          <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Get Started!</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section class="page-section" id="services">
-    <div class="container">
-      <h2 class="text-center mt-0">At Your Service</h2>
-      <hr class="divider my-4">
-      <div class="row">
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-gem text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Sturdy Themes</h3>
-            <p class="text-muted mb-0">Our themes are updated regularly to keep them bug free!</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-laptop-code text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Up to Date</h3>
-            <p class="text-muted mb-0">All dependencies are kept current to keep things fresh.</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-globe text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Ready to Publish</h3>
-            <p class="text-muted mb-0">You can use this design as is, or you can make changes!</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-heart text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Made with Love</h3>
-            <p class="text-muted mb-0">Is it really open source if it's not made with love?</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Portfolio Section -->
-  <section id="portfolio">
-    <div class="container-fluid p-0">
-      <div class="row no-gutters">
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/1.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/1.jpg')}}" alt="">
-            <div class="portfolio-box-caption">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
+    <header class="masthead text-white text-center"
+        style="background: url('public/welcome/img/bg-masthead.jpg')no-repeat center center;background-size: cover;">
+        <div class="row mt-2">
+            <div class="col">
+                <h1 style="color: rgb(80,114,150);font-size: 58px;font-family: Aclonica, sans-serif;">{{ __('welcome.safa9atAlgeria') }}</h1>
             </div>
-          </a>
         </div>
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/2.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/2.jpg')}}" alt="">
-            <div class="portfolio-box-caption">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
+        <div class="row">
+            <div class="col">
+                <h3 style="color: rgba(80,114,150,0.6);font-size: 28px;font-family: Aclonica, sans-serif;">{{ __('welcome.doItFromYourHome') }}</h3>
             </div>
-          </a>
         </div>
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/3.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/3.jpg')}}" alt="">
-            <div class="portfolio-box-caption">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
+        <div class="row m-5">
+            @include('layouts.modals.video')
+            <div class="col pulse animated">
+                <button type="button" class="btn btn-primary video-btn" data-toggle="modal" data-src="https://www.youtube.com/embed/HDsHQLVNVzY" data-target="#myModal" style="background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;">
+                <i class="far fa-play-circle" data-bs-hover-animate="pulse" style="font-size: 111px;color: rgba(122,150,184,0.69);opacity: 0.64;filter: blur(0px) brightness(111%) contrast(106%) grayscale(0%) hue-rotate(0deg) saturate(131%);"></i>
+                </button>
             </div>
-          </a>
         </div>
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/4.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/4.jpg')}}" alt="">
-            <div class="portfolio-box-caption">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
+    </header>
+    <section class="features-icons bg-light text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4" data-aos="fade" data-aos-duration="800">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><i class="fas fa-handshake m-auto" data-bs-hover-animate="pulse" style="color: rgb(80,114,150);"></i></div>
+                        <h3>{{ __('welcome.tit1') }}</h3>
+                        <p class="lead mb-0">{{ __('welcome.desc1') }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade" data-aos-duration="1000" data-aos-delay="700">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><i class="fas fa-shield-alt m-auto" data-bs-hover-animate="pulse" style="color: rgb(80,114,150);"></i></div>
+                        <h3>{{ __('welcome.tit2') }}</h3>
+                        <p class="lead mb-0">{{ __('welcome.desc2') }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade" data-aos-duration="1500" data-aos-delay="1000">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><i class="far fa-id-card m-auto" data-bs-hover-animate="pulse" style="color: rgb(80,114,150);"></i></div>
+                        <h3>{{ __('welcome.tit3') }}</h3>
+                        <p class="lead mb-0">{{ __('welcome.desc3') }}</p>
+                    </div>
+                </div>
             </div>
-          </a>
         </div>
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/5.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/5.jpg')}}" alt="">
-            <div class="portfolio-box-caption">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
-            </div>
-          </a>
+    </section>
+    
+       <h2 class="m-5 text-center" style="color: #507296">{{ __('welcome.someOfOurServices') }}...</h2>
+
+<div class="row justify-content-center">
+
+
+    @foreach($services as $service)
+
+        <div class="col">
+                <div class="card mx-auto mt-5" style="width: 20rem;">
+                <a href="{{ url('service/'.$service->id.'') }}" class="no-under-line">
+                    <img src="{{ asset('storage/'.$service->img_path.'') }}" class="img-fluid border-bottom" alt="Responsive image" style="width: 100%; height: 12rem;" />
+                </a>
+                <div class="pl-3 pr-3 pt-2 pb-1">
+
+                    <!-- Avatar -->
+                    <a href="{{ url('user/'.$service->user->id) }}" class="no-under-line">
+                        <img src="{{ url('storage/'.$service->user->avatar) }}" class="img-fluid d-inline" style="width: 25px;height: 25px;border-radius: 50%;">
+                    </a>
+
+                    <!-- Creator Name -->
+                    <a href="{{ url('user/'.$service->user->id) }}" class="m-2 d-inline no-under-line text-dark p-0" title="Server name" style="font-size: 13px;">{{ $service->user->name }}</a>
+
+                    
+                    <!-- Service Title -->
+                    <h5 class="mt-3">
+                    <a href="{{ url('service/'.$service->id.'') }}" class="no-under-line hover-blue" title="{{ $service->title }}" style="color:black;">{{ $service->title }}</a>
+                    </h5>
+
+                </div>
+
+                <div class="card-footer bg-white mt-3">
+                    <a><small>STARTING AT</small> <a class="font-weight-bold text-muted" style="font-size: 16px;">{{ $service->price.' '.$service->currency }}</a></a>
+                </div>
+
+                </div>
         </div>
-        <div class="col-lg-4 col-sm-6">
-          <a class="portfolio-box" href="{{ asset('welcome/img/portfolio/fullsize/6.jpg')}}">
-            <img class="img-fluid" src="{{ asset('welcome/img/portfolio/thumbnails/6.jpg')}}" alt="">
-            <div class="portfolio-box-caption p-3">
-              <div class="project-category text-white-50">
-                Category
-              </div>
-              <div class="project-name">
-                Project Name
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
+    @endforeach
+
     </div>
-  </section>
 
-  <!-- Call to Action Section -->
-  <section class="page-section bg-dark text-white">
-    <div class="container text-center">
-      <h2 class="mb-4">Free Download at Start Bootstrap!</h2>
-      <a class="btn btn-light btn-xl" href="https://startbootstrap.com/themes/creative/">Download Now!</a>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section class="page-section" id="contact">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <h2 class="mt-0">Let's Get In Touch!</h2>
-          <hr class="divider my-4">
-          <p class="text-muted mb-5">Ready to start your next project with us? Give us a call or send us an email and we will get back to you as soon as possible!</p>
+    <div class="row ">
+        <div class="col-12 mt-3 d-flex justify-content-center">
+            <h5><a href="{{ url('service') }}" style="color: #507296">{{ __('welcome.seeAllServices') }}</a></h5>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-4 ml-auto text-center mb-5 mb-lg-0">
-          <i class="fas fa-phone fa-3x mb-3 text-muted"></i>
-          <div>+1 (202) 555-0149</div>
-        </div>
-        <div class="col-lg-4 mr-auto text-center">
-          <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
-          <!-- Make sure to change the email address in anchor text AND the link below! -->
-          <a class="d-block" href="mailto:contact@yourwebsite.com">contact@yourwebsite.com</a>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="bg-light py-5">
-    <div class="container">
-      <div class="small text-center text-muted">Khadamat.ml</div>
-    </div>
-  </footer>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="{{ asset('welcome/vendor/jquery/jquery.min.js')}}"></script>
-  <script src="{{ asset('welcome/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<section class="testimonials text-center bg-light mt-4">
+        <div class="container">
+            <div class="row justify-content-center">
 
-  <!-- Plugin JavaScript -->
-  <script src="{{ asset('welcome/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-  <script src="{{ asset('welcome/vendor/magnific-popup/jquery.magnific-popup.min.js')}}"></script>
+                <div class="col-lg-4">
+                    <div class="mx-auto testimonial-item mb-5 mb-lg-0">
+                        <h3>{{ __('welcome.benaliSayadAhmed') }}</h3>
+                        <p class="font-weight-light mb-0">{{ __('welcome.owner') }}</p>
+                    </div>
+                </div>
 
-  <!-- Custom scripts for this template -->
-  <script src="{{ asset('welcome/js/creative.min.js')}}"></script>
+            </div>
+        </div>
+    </section>
+    <section class="call-to-action text-white text-center" style="background:url(&quot;{{ asset('public/welcome/img/bg-masthead.jpg')}}&quot;) no-repeat center center;background-size:cover;">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <h2 class="mb-4">{{ __('welcome.readyToGetStarted') }}</h2>
+                </div>
+
+                <div class="col-xl-5 mx-auto">
+                    <a class="btn btn-primary btn-block btn-lg" href="{{ url('register') }}">{{ __('welcome.signUp') }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 my-auto h-100 text-center text-lg-left">
+                    <ul class="list-inline mb-2">
+                        <li class="list-inline-item"><a href="#">{{ __('welcome.about') }}</a></li>
+                        <li class="list-inline-item"><span>⋅</span></li>
+                        <li class="list-inline-item"><a href="#">{{ __('welcome.contact') }}</a></li>
+                        <li class="list-inline-item"><span>⋅</span></li>
+                        <li class="list-inline-item"><a href="#">{{ __('welcome.termOfUse') }}</a></li>
+                        <li class="list-inline-item"><span>⋅</span></li>
+                        <li class="list-inline-item"><a href="#">{{ __('welcome.privacyPolicy') }}</a></li>
+                    </ul>
+                    <p class="text-muted small mb-4 mb-lg-0">{{ __('welcome.allRightReserved') }}</p>
+                </div>
+                <div class="col-lg-6 my-auto h-100 text-center text-lg-right">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-instagram fa-2x fa-fw"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div></div>
+
+
+    <script src="{{ asset('public/welcome/js/jquery.min.js')}}"></script>
+    <script src="{{ asset('public/welcome/bootstrap/js/bootstrap.min.js')}}"></script>
+    <script src="{{ asset('public/welcome/js/bs-animation.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
+
+
+    <script type="text/javascript">
+$(document).ready(function() {
+
+// Gets the video src from the data-src on each button
+
+var $videoSrc;  
+$('.video-btn').click(function() {
+    $videoSrc = $(this).data( "src" );
+});
+console.log($videoSrc);
+
+  
+  
+// when the modal is opened autoplay it  
+$('#myModal').on('shown.bs.modal', function (e) {
+    
+// set the video src to autoplay and not to show related video. Youtube related video is like a box of chocolates... you never know what you're gonna get
+$("#video").attr('src',$videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0" ); 
+})
+  
+
+
+// stop playing the youtube video when I close the modal
+$('#myModal').on('hide.bs.modal', function (e) {
+    // a poor man's stop video
+    $("#video").attr('src',$videoSrc); 
+}) 
+    
+    
+
+
+  
+  
+// document ready  
+});
+
+
+
+</script>
 
 </body>
 

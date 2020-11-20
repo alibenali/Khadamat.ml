@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\User;
 use App\Conversation;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Auth;
 
 class ConversationPolicy extends \TCG\Voyager\Policies\BasePolicy
 {
@@ -19,13 +20,18 @@ class ConversationPolicy extends \TCG\Voyager\Policies\BasePolicy
      */
 
     public function before(User $user){
-        if($user->is_admin){
+        if(Auth::user()->hasRole('admin')){
             return true;
         }
     }
 
     public function view(User $user, Conversation $conversation)
     {
+        
+        if($conversation->payment->creator_id == Auth::id()){
+            return true;
+        }
+
         return $user->id == $conversation->user_id;
     }
 

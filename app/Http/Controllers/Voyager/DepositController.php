@@ -9,10 +9,14 @@ use App\Balance;
 use App\Http\Requests\depositRequest;
 use Auth;
 use App\Traits\order_queue;
+use App\Traits\createNotification;
+use App\Traits\balanceTrait;
 
 class DepositController extends Controller
 {
     use order_queue;
+    use createNotification;
+    use balanceTrait;
 
     // Accept deposit
     public function accept(Request $request){
@@ -23,17 +27,19 @@ class DepositController extends Controller
         $this->Authorize('accept', $deposit);
 
 		$payment_method = strtolower($deposit->p_method.'_'.$deposit->currency);
+        $balance_amount = $request->input('amount');
 
-		$balance->$payment_method = $balance->$payment_method + $request->input('amount');
-		$balance->save();
+        $this->balanceUp($deposit->user_id, $payment_method, $balance_amount, "Deposit accpeted", "deposit/".$deposit->id);
 
         $deposit->the_status = "Accepted";
         $deposit->amount = $request->input('amount');
+
         $deposit->save();
 
         $this->order();
+        $this->createNotification($deposit->user_id,'depositAccepted','',url('deposit/'.$deposit->id));
 
-        return redirect(url('admin/deposits'))->with(['message' => "Deposit Accepted", 'alert-type' => 'success']);
+        return redirect(url('manage/deposits'))->with(['message' => "Deposit Accepted", 'alert-type' => 'success']);
     }
 
 
@@ -48,8 +54,10 @@ class DepositController extends Controller
         $this->order();
         
         session()->flash('success', 'The deposit has been refused.');
+        
+        $this->createNotification($deposit->user_id,'depositRefused','',url('deposit/'.$deposit->id));
 
-        return redirect(url('admin/deposits'))->with(['message' => "Deposit Refused", 'alert-type' => 'success']);
+        return redirect(url('manage/deposits'))->with(['message' => "Deposit Refused", 'alert-type' => 'success']);
     }
 
     // Delete Deposit

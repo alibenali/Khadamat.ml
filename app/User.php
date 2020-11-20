@@ -8,15 +8,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 
-class User extends \TCG\Voyager\Models\User
+class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
 {
     use Notifiable, CausesActivity, LogsActivity;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
+
+
     protected $fillable = [
         'name', 'email', 'password',
     ];
@@ -49,5 +50,9 @@ class User extends \TCG\Voyager\Models\User
 
     public function payments(){
         return $this->hasMany('App\Payment');
+    }
+
+    public function services(){
+        return $this->hasMany('App\Service');
     }
 }

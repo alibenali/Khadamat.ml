@@ -41,7 +41,7 @@
 </head>
 <body>
     <div id="app">
-        	<button class="btn btn-lg m-2" onclick="window.location.assign('{{ url('admin/payments') }}')"> <i class="fas fa-arrow-circle-left"></i> Return</button>
+        	<button class="btn btn-lg m-2" onclick="window.location.assign('{{ url('server/payment') }}')"> <i class="fas fa-arrow-circle-left"></i> Return</button>
         	@include('layouts.notifications')
         <main class="py-4">
             @yield('content')
